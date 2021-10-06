@@ -25,12 +25,18 @@ export default function DriverWeek(props) {
         title={`${driver}`}
       />
       <CardContent>
+      {totals.userRate !== '0.00%' ?
+      <>
         <Typography variant="body2" color="textSecondary" component="p">
           Rate: {totals.userRate}
         </Typography>
         <Typography variant="body2" color="textSecondary" component="p">
           Total Pay: ${totalPay}
         </Typography>
+      </>
+
+      : ''}
+
       </CardContent>
     </React.Fragment>
   )

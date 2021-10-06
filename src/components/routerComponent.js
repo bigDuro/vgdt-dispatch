@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 
 import LoadBoard from '../containers/LoadBoard';
-import LoadDetails from '../containers/LoadDetails';
 import CommonForm from '../containers/CommonForm';
 import AssetManager from '../containers/AssetManager';
 import CommonBoard from '../containers/CommonBoard';
