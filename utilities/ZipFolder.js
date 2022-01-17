@@ -4,7 +4,7 @@ const vgdtAPI_zip = 'build/public/api.zip';
 
 const codeigniter4_zip = 'build/non_public/codeigniter4/codeigniter4-beta.zip';
 const publicHtml = 'build/public/vgdt-dispatch';
-const publicHtml_zip = 'build/public/vgdt-dispatch-beta-v1.zip';
+const publicHtml_zip = 'build/public/vgdt-dispatch-beta-v2.zip';
 const publicAssets = 'src/assets';
 const publicAssets_zip = 'build/public/assets.zip';
 const publicAPI = 'build/public/api';
