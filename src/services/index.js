@@ -119,3 +119,20 @@ export const notifyDispatch = async (data) => {
     const json = await response.json();
     return json;
 }
+
+export const searchRecordsBy = async (table, field, value) => {
+  const response = await fetch(`${env}/${table}/search`, {
+    method: 'POST',
+    body: JSON.stringify(
+      {
+          "table": table,
+          "query": {
+              [field]: value
+          }
+
+      }
+    ),
+  })
+    const json = await response.json();
+    return json;
+}

@@ -13,7 +13,7 @@ import { getUpdatedRows } from './rows';
 import { getColumnType } from './columns';
 import { paperStylesTable } from '../../styles/paper';
 import { getActions } from './actions';
-import { get, getByID, save, deleteById, getAssets, exportToCSV, getRecordsByIds } from '../../services/';
+import { get, getByID, save, deleteById, getAssets, exportToCSV, getRecordsByIds, searchRecordsBy } from '../../services/';
 import './index.scss';
 
 
@@ -49,22 +49,43 @@ function CommonBoard(props) {
   };
 
   const filterRecords = (searchTerm) => {
-    const fields = Object.keys(rows[0]);
-    const filteredRecords = [];
-    const cacheIDs = [];
-    if(fields.length) {
-      fields.map(field => {
-        return rows.filter(record => {
-          if(!cacheIDs.includes(record.id) && record[field] && record[field].length && (record[field].toLowerCase().includes(searchTerm.toLowerCase()))) {
-            cacheIDs.push(record.id)
-            filteredRecords.push(record)
-          }
-          return true
-        });
-      })
-      setFilteredRecords(filteredRecords)
-      setSearchTerm(searchTerm)
+    const tableKey = {
+      loads: {
+        field: 'loadNumber'
+      },
+      brokers: {
+        field: 'name'
+      }
     }
+    const field = tableKey[table].field || 'id';
+    const response = searchRecordsBy(table, field, searchTerm);
+    response.then(data => {
+      if(table === 'loads'){
+      const brokerIds = data.map(load => load.broker);
+      const employeeIds = [...data.map(load => load.driver), ...data.map(load => load.user)];
+      const equipmentIds = [...data.map(load => load.tractor), ...data.map(load => load.trailer)];
+      Promise.all([
+        getRecordsByIds('brokers', brokerIds),
+        getRecordsByIds('employees', employeeIds),
+        getRecordsByIds('equipment', equipmentIds)
+      ]).then(data_sub => {
+        const tables = {
+          brokers: data_sub[0],
+          employees: data_sub[1],
+          equipment: data_sub[2]
+        };
+        const updatedRows = getUpdatedRows(table, tables, data);
+        setTableData({...tableData, ...tables});
+        setFilteredRecords([...updatedRows]);
+      })
+    }
+      else {
+        const updatedRows = getUpdatedRows(table, {}, data)
+        setFilteredRecords([...updatedRows]);
+      }
+      setSearchTerm(searchTerm)
+    })
+
   }
 
   const deleteRecords = (table, ids) => {
@@ -113,7 +134,6 @@ function CommonBoard(props) {
         };
         const updatedRows = getUpdatedRows(table, tables, data);
         if(updatedRows.mappedInvoiceNo) {
-          console.log('mappedInvoiceNo:: ', updatedRows.mappedInvoiceNo);
           setMappedInvoiceNo(updatedRows.mappedInvoiceNo)
         }
         setTableData({...tableData, ...tables});
